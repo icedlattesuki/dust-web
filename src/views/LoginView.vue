@@ -24,7 +24,7 @@ import { isLoggedIn } from '../common/user'
 import { DustIcon } from '../common/icon'
 
 
-const axios = require('axios').default
+const axios = require('axios')
 const walletIconStyle = {}
 walletIconStyle.fontSize = "60px"
 const metamaskIconStyle = {}
@@ -51,10 +51,10 @@ export default defineComponent({
             // error message when web3 is null
             const accounts = await web3.eth.getAccounts()
             const selectedAccount = accounts[0]
-            var response = await axios.get(`/api/user/nonce?publicAddress=${selectedAccount}`)
+            var response = await axios.get(`/api/auth/nonce?publicAddress=${selectedAccount}`)
             console.log(response)
             const signedMessage = await web3.eth.personal.sign(response.data.toString(), selectedAccount)
-            response = await axios.post('/api/user/login', {
+            response = await axios.post('/api/auth/login', {
                 publicAddress: selectedAccount,
                 signature: signedMessage
             })
