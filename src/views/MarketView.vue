@@ -1,14 +1,14 @@
 <template>
-  <NavBar></NavBar>
+  <NewNavBar></NewNavBar>
   This is market!
 </template>
 
 <script>
-import NavBar from '../components/NavBar.vue'
+import NewNavBar from '../components/NewNavBar.vue'
 
 export default {
     components: {
-        NavBar
+        NewNavBar
     }
 }
 </script>

@@ -1,30 +1,23 @@
 <template>
-    <NavBar></NavBar>
-    <a-row type="flex" justify="center" align="middle">
-        <a-col :span="9">
-        </a-col>
-        <a-col :span="6">
-            <div class="login">
-                <!-- <dust-icon type="icon-qianbao1" :style="walletIconStyle"/> -->
-                <h2>使用以太坊钱包登录</h2>
-                <a-button class="login-button" @click="login"><dust-icon type="icon-metamask-fox" :style="metamaskIconStyle"/><span>MetaMask</span></a-button>
-            </div>
-        </a-col>
-        <a-col :span="9">
-        </a-col>
-    </a-row>
-    
+    <NewNavBar></NewNavBar>
+    <div class="text-center pt-20">
+        <h1 class="leading-tight text-3xl mt-0 mb-7">使用以太坊钱包登录</h1>
+        <button class="px-32 py-1.5 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white active:bg-red-600 focus:outline-none focus:ring space-x-1" @click="login">
+            <dust-icon type="icon-metamask-fox" :style="metamaskIconStyle"/>
+            <span class="text-base tracking-wide">MetaMask</span>
+        </button>
+    </div>
 </template>
 
 <script>
 import { defineComponent } from "vue"
-import NavBar from '../components/NavBar.vue'
+import axios from 'axios'
 import { connectToWallet } from '../common/web3'
 import { isLoggedIn } from '../common/user'
 import { DustIcon } from '../common/icon'
+import NewNavBar from '../components/NewNavBar.vue'
 
 
-const axios = require('axios')
 const walletIconStyle = {}
 walletIconStyle.fontSize = "60px"
 const metamaskIconStyle = {}
@@ -33,8 +26,8 @@ metamaskIconStyle.fontSize = "30px"
 
 export default defineComponent({
     components: {
-        NavBar,
-        DustIcon
+        DustIcon,
+        NewNavBar
     },
     data() {
         return {
