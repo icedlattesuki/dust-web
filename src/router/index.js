@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MarketView from '../views/MarketView.vue'
 import LoginView from '../views/LoginView.vue'
-import SettingView from '../views/SettingView.vue'
+import UserProfileSettingView from '../views/UserProfileSettingView.vue'
+import SteamSettingView from '../views/SteamSettingView'
 
 const routes = [
   {
@@ -20,9 +21,14 @@ const routes = [
     component: LoginView
   },
   {
-    path: '/user/setting',
-    name: 'setting',
-    component: SettingView
+    path: '/user/setting/profile',
+    name: 'userProfileSetting',
+    component: UserProfileSettingView
+  },
+  {
+    path: '/user/setting/steam',
+    name: 'steamSetting',
+    component: SteamSettingView
   }
 ]
 

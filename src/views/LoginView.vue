@@ -57,23 +57,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style scoped>
-.login {
-    text-align: center;
-    margin-top: 100px;
-}
-
-.login-button {
-    width: 100%;
-    height: 50px;
-    border-radius: 7px;
-    border-width: 1px;
-    font-size: 17px;
-    font-weight: 500;
-    margin-top: 20px;
-    display: flex;
-    justify-content: center; /* 水平居中 */
-    align-items: center;
-}
-</style>

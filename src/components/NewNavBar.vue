@@ -22,7 +22,7 @@
                 </a>
 
                 <div class="group relative dropdown" v-if="isLoggedIn">
-                    <a href="/user/setting" class="flex h-16 border-b-4 border-transparent hover:text-red-700 hover:border-current items-center justify-center ">
+                    <a href="/user/setting/profile" class="flex h-16 border-b-4 border-transparent hover:text-red-700 hover:border-current items-center justify-center ">
                         <a-avatar :src="avatarUrl" :size="32">
                         </a-avatar>
                     </a>
