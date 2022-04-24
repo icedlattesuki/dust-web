@@ -2,10 +2,10 @@
     <NewNavBar></NewNavBar>
     <div class="flex h-screen mx-auto max-w-screen-2xl sm:px-6 lg:pl-16 pt-10 tracking-wider">
         <div class="">
-            <div class="w-60 h-full shadow-md bg-white">
+            <div class="w-60 shadow-md bg-white">
                 <ul class="relative">
                     <li class="relative">
-                        <a class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-gray-900 hover:bg-gray-100 transition duration-300 ease-in-out" href="/user/setting/profile">
+                        <a class="flex items-center text-sm  tracking-wider py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis whitespace-nowrap rounded hover:text-gray-900 hover:bg-gray-100 transition duration-300 ease-in-out" href="/user/setting/profile">
                             账户设置
                         </a>
                      </li>
@@ -18,7 +18,7 @@
                     <a-avatar :size="80" :src="avatarSrc">
                     </a-avatar>
                     <a-upload class="mt-5" v-model:fileList="fileList" :customRequest="uploadAvatar" :disabled="disableUploadAvatar" :showUploadList=false :maxCount=1> 
-                        <button class="px-2 py-1 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white active:bg-red-600 focus:outline-none focus:ring tracking-wider">
+                        <button class="px-3 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none tracking-wider">
                             上传新头像
                         </button>
                     </a-upload>
@@ -44,10 +44,10 @@
                         <p class="text-sm font-medium text-gray-700">用户名</p>
                     </div>
                     <div class="w-80">
-                        <input class="w-full p-2 text-sm border-2 border-gray-200 rounded focus:outline-none tracking-wide" v-model="username"/>
+                        <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="username"/>
                     </div>
                     <div class="w-32 text-right">
-                        <button class="px-5 py-1 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white active:bg-red-600 focus:outline-none focus:ring tracking-wide">
+                        <button class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none tracking-wider" @click="updateUsername">
                             更新
                         </button>
                     </div>
@@ -60,7 +60,13 @@
                         <p class="text-sm font-medium text-gray-700">Steam ID</p>
                     </div>
                     <div class="w-80">
-                        <p class="text-sm font-medium text-gray-700">未绑定Steam</p>
+                        <div v-if="isBindSteam">
+                            <p class="text-sm text-gray-700 tracking-wider"> {{ steamId }}</p>
+                        </div>
+                        <div class="flex" v-else>
+                            <dust-icon type="icon-warning" :style="warnningIconStyle"/>
+                            <p class="text-sm text-gray-700 tracking-wider">未绑定Steam</p>
+                        </div>
                     </div>
                     <div class="w-32 text-right">
                         <form action="https://steamcommunity.com/openid/login" method="post">
@@ -71,8 +77,10 @@
                             <input type="hidden" name="openid.ns" value="http://specs.openid.net/auth/2.0" />
                             <input type="hidden" name="openid.mode" value="checkid_setup" />
                             <input type="hidden" name="openid.realm" value="http://www.dust.com" />
-                            <input type="hidden" name="openid.return_to" value="http://www.dust.com:81/user/setting/steam" />
-                            <a-button html-type="submit">绑定steam</a-button>
+                            <input type="hidden" name="openid.return_to" value="http://www.dust.com:81/user/profile" />
+                            <button type="submit" class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none tracking-wider" v-if="!isBindSteam">
+                                绑定
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -84,10 +92,10 @@
                         <p class="text-sm font-medium text-gray-700 mb-4">Steam Api Key</p>
                     </div>
                     <div class="w-80">
-                        <input class="w-full p-1 text-sm border-2 border-gray-200 rounded focus:outline-none" v-model="steamApiKey"/>
+                        <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamApiKey"/>
                     </div>
                     <div class="w-32 text-right">
-                        <button class="px-5 py-1 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white active:bg-red-600 focus:outline-none focus:ring">
+                        <button class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none  tracking-wide" @click="updateSteamApiKey">
                             更新
                         </button>
                     </div>
@@ -100,10 +108,10 @@
                         <p class="text-sm font-medium text-gray-700">Steam交易链接</p>
                     </div>
                     <div class="w-80">
-                        <input class="w-full p-1 text-sm border-2 border-gray-200 rounded focus:outline-none" v-model="steamTradeUrl"/>
+                        <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamTradeUrl"/>
                     </div>
                     <div class="w-32 text-right">
-                        <button class="px-5 py-1 text-red-700 border border-red-700 rounded hover:bg-red-700 hover:text-white active:bg-red-600 focus:outline-none focus:ring">
+                        <button class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none  tracking-wide" @click="updateSteamTradeUrl">
                             更新
                         </button>
                     </div>
@@ -119,21 +127,30 @@ import { defineComponent } from 'vue';
 import axios from 'axios';
 import NewNavBar from '../components/NewNavBar.vue'
 import { cos } from '../common/cos'
+import { DustIcon } from '../common/icon'
 
 export default defineComponent({
     components: {
-        NewNavBar
+        NewNavBar,
+        DustIcon
     },
     data() {
         return {
             username: '',
             avatarSrc: '',
             publicAddress: '',
+            steamId: '',
+            isBindSteam: false,
+            steamApiKey: '',
+            steamTradeUrl: '',
             beforeUpload: () => false,
             disableUploadAvatar: false,
             maxCount: 1,
             showUploadList: false,
             fileList: [],
+            warnningIconStyle: {
+                fontSize: "20px"
+            }
         }
     },
     methods: {
@@ -152,6 +169,32 @@ export default defineComponent({
             this.avatarSrc = response.data
             this.disableUploadAvatar = false
             request.onSuccess()
+        },
+        async updateUsername() {
+            await axios.post('/api/user/username', {
+                username: this.username
+            })
+        },
+        async bindSteam(steamReturnUrl) {
+            if (this.isBindSteam) {
+                return
+            }
+            const response = await axios.post('/api/user/steamid', {
+                steamReturnUrl: steamReturnUrl
+            })
+            console.log(response)
+            this.steamId = response.data
+            this.isBindSteam = true
+        },
+        async updateSteamApiKey() {
+            await axios.post('/api/user/steam-api-key', {
+                steamApiKey: this.steamApiKey
+            })
+        },
+        async updateSteamTradeUrl() {
+            await axios.post('/api/user/steam-trade-url', {
+                steamTradeUrl: this.steamTradeUrl
+            })
         }
     },
     mounted: async function() {
@@ -160,6 +203,15 @@ export default defineComponent({
         this.username = profile.name
         this.publicAddress = profile.publicAddress
         this.avatarSrc = profile.avatarUrl
+        this.steamId = profile.steamId
+        this.isBindSteam = Boolean(profile.steamId)
+        this.steamApiKey = profile.steamApiKey
+        this.steamTradeUrl = profile.steamTradeUrl
+
+        const url = window.location.href
+        if (url.includes('openid')) {
+            this.bindSteam(url)
+        }
     }
 })
 </script>
