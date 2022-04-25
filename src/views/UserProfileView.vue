@@ -1,5 +1,5 @@
 <template>
-    <NewNavBar></NewNavBar>
+    <NewNavBar :newAvatarUrl="avatarSrc"></NewNavBar>
     <div class="flex h-screen mx-auto max-w-screen-2xl sm:px-6 lg:pl-16 pt-10 tracking-wider">
         <div class="">
             <div class="w-60 shadow-md bg-white">
@@ -45,7 +45,9 @@
                             <p class="text-sm font-medium text-gray-700">用户名</p>
                         </div>
                         <div class="w-80">
-                            <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="username"/>
+                            <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="username" v-if="!usernameCheckFail"/>
+                            <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-red-700 rounded-sm focus:outline-none" v-model="username" v-else/>
+                            <p class="text-xs text-gray-700 pt-3">包含数字、英文、中文在内的4-14个字符</p>
                         </div>
                         <div class="w-32 text-right">
                             <button class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none tracking-wider" @click="updateUsername">
@@ -86,14 +88,15 @@
                         </div>
                     </div>
                 </div>
-                <a-divider />
-                <div class="mt-8">
+                <a-divider v-if="isBindSteam"/>
+                <div class="mt-8" v-if="isBindSteam">
                     <div class="flex justify-between items-center">
                         <div class="w-32">
                             <p class="text-sm font-medium text-gray-700 mb-4">Steam Api Key</p>
                         </div>
                         <div class="w-80">
                             <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamApiKey"/>
+                            <div class="text-xs text-gray-700 pt-3"><a  href="https://steamcommunity.com/dev/apikey" target="_blank">获取Steam Api Key</a></div>
                         </div>
                         <div class="w-32 text-right">
                             <button class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none  tracking-wide" @click="updateSteamApiKey">
@@ -102,14 +105,15 @@
                         </div>
                     </div>
                 </div>
-                <a-divider />
-                <div class="mt-8">
+                <a-divider v-if="isBindSteam"/>
+                <div class="mt-8" v-if="isBindSteam">
                     <div class="flex justify-between items-center">
                         <div class="w-32">
                             <p class="text-sm font-medium text-gray-700">Steam交易链接</p>
                         </div>
                         <div class="w-80">
                             <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamTradeUrl"/>
+                            <div class="text-xs text-gray-700 pt-3"><a :href="'https://steamcommunity.com/profiles/' + steamId + '/tradeoffers/privacy#trade_offer_access_url'" target="_blank">获取Steam交易链接</a></div>
                         </div>
                         <div class="w-32 text-right">
                             <button class="px-5 py-1 bg-blue-500 text-white rounded-sm hover:bg-blue-700 focus:bg-blue-700 focus:outline-none  tracking-wide" @click="updateSteamTradeUrl">
@@ -131,7 +135,7 @@ import axios from 'axios';
 import NewNavBar from '../components/NewNavBar.vue'
 import { cos } from '../common/cos'
 import { DustIcon } from '../common/icon'
-
+import * as checkUtils from '../common/check'
 
 export default defineComponent({
     components: {
@@ -152,6 +156,7 @@ export default defineComponent({
             showUploadList: false,
             fileList: [],
             spinning: false,
+            usernameCheckFail: false,
             warnningIconStyle: {
                 fontSize: "20px"
             }
@@ -179,11 +184,16 @@ export default defineComponent({
             }
         },
         async updateUsername() {
+            if (!checkUtils.checkUsername(this.username)) {
+                this.usernameCheckFail = true
+                return
+            }
             this.spinning = true
             try {
                 await axios.post('/api/user/username', {
                     username: this.username
                 })
+                this.usernameCheckFail = false
                 this.openSuccessModal("更新用户名成功")
             } catch (e) {
                 this.openFailModal("更新用户名失败")
@@ -240,20 +250,26 @@ export default defineComponent({
             })
         }
     },
-    mounted: async function() {
-        const response = await axios.get('/api/user/profile')
-        const profile = response.data
-        this.username = profile.name
-        this.publicAddress = profile.publicAddress
-        this.avatarSrc = profile.avatarUrl
-        this.steamId = profile.steamId
-        this.isBindSteam = Boolean(profile.steamId)
-        this.steamApiKey = profile.steamApiKey
-        this.steamTradeUrl = profile.steamTradeUrl
+    async created() {
+        try {
+            this.spinning = true
+            const response = await axios.get('/api/user/profile')
+            const profile = response.data
+            this.username = profile.name
+            this.publicAddress = profile.publicAddress
+            this.avatarSrc = profile.avatarUrl
+            this.steamId = profile.steamId
+            this.isBindSteam = Boolean(profile.steamId)
+            this.steamApiKey = profile.steamApiKey
+            this.steamTradeUrl = profile.steamTradeUrl
+            this.spinning = false
 
-        const url = window.location.href
-        if (url.includes('openid')) {
-            this.bindSteam(url)
+            const url = window.location.href
+            if (url.includes('openid')) {
+                this.bindSteam(url)
+            }
+        } catch(e) {
+            this.openFailModal("数据加载失败")
         }
     }
 })

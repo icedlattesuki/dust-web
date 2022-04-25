@@ -51,10 +51,20 @@ import * as user from '../common/user'
 export default {
     components: {
     },
+    props: ['newAvatarUrl'],
     data() {
         return {
-           avatarUrl: '',
-           isLoggedIn: false
+            initialAvatarUrl: '',
+            isLoggedIn: false
+        }
+    },
+    computed: {
+        avatarUrl: function() {
+            if (this.newAvatarUrl) {
+                return this.newAvatarUrl
+            } else {
+                return this.initialAvatarUrl
+            }
         }
     },
     methods: {
@@ -70,7 +80,7 @@ export default {
             const response = await axios.get('/api/user/profile')
             if (response.status === 200) {
                 const profile = response.data
-                this.avatarUrl = profile.avatarUrl
+                this.initialAvatarUrl = profile.avatarUrl
             }
         }
     }
