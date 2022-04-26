@@ -95,7 +95,8 @@
                             <p class="text-sm font-medium text-gray-700 mb-4">Steam Api Key</p>
                         </div>
                         <div class="w-80">
-                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamApiKey"/>
+                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-red-700 rounded-sm focus:outline-none" v-model="steamApiKey" v-if="checkSteamApiKeyFail"/>
+                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamApiKey" v-else/>
                             <div class="text-xs text-gray-700 pt-3"><a  href="https://steamcommunity.com/dev/apikey" target="_blank">获取Steam Api Key</a></div>
                         </div>
                         <div class="w-32 text-right">
@@ -112,7 +113,8 @@
                             <p class="text-sm font-medium text-gray-700">Steam交易链接</p>
                         </div>
                         <div class="w-80">
-                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamTradeUrl"/>
+                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-red-700 rounded-sm focus:outline-none" v-model="steamTradeUrl" v-if="checkTradeUrlFail"/>
+                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamTradeUrl" v-else/>
                             <div class="text-xs text-gray-700 pt-3"><a :href="'https://steamcommunity.com/profiles/' + steamId + '/tradeoffers/privacy#trade_offer_access_url'" target="_blank">获取Steam交易链接</a></div>
                         </div>
                         <div class="w-32 text-right">
@@ -157,6 +159,8 @@ export default defineComponent({
             fileList: [],
             spinning: false,
             usernameCheckFail: false,
+            checkSteamApiKeyFail: false,
+            checkTradeUrlFail: false,
             warnningIconStyle: {
                 fontSize: "20px"
             }
@@ -216,22 +220,32 @@ export default defineComponent({
             }
         },
         async updateSteamApiKey() {
+            if (!checkUtils.checkSteamApiKey(this.steamApiKey)) {
+                this.checkSteamApiKeyFail = true
+                return
+            }
             this.spinning = true
             try {
                 await axios.post('/api/user/steam-api-key', {
                     steamApiKey: this.steamApiKey
                 })
+                this.checkSteamApiKeyFail = false
                 this.openSuccessModal("更新Steam Api Key成功")
             } catch(e) {
                 this.openFailModal("更新Steam Api Key失败")
             }
         },
         async updateSteamTradeUrl() {
+            if (!checkUtils.checkSteamTradeUrl(this.steamTradeUrl)) {
+                this.checkTradeUrlFail = true
+                return
+            }
             this.spinning = true
             try {
                 await axios.post('/api/user/steam-trade-url', {
                     steamTradeUrl: this.steamTradeUrl
                 })
+                this.checkTradeUrlFail = false
                 this.openSuccessModal("更新Steam交易链接成功")
             } catch(e) {
                 this.openFailModal("更新Steam交易链接失败")
@@ -260,8 +274,8 @@ export default defineComponent({
             this.avatarSrc = profile.avatarUrl
             this.steamId = profile.steamId
             this.isBindSteam = Boolean(profile.steamId)
-            this.steamApiKey = profile.steamApiKey
-            this.steamTradeUrl = profile.steamTradeUrl
+            this.steamApiKey = profile.apiKey
+            this.steamTradeUrl = profile.tradeUrl
             this.spinning = false
 
             const url = window.location.href
