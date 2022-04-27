@@ -1,5 +1,5 @@
 <template>
-    <NewNavBar :newAvatarUrl="avatarSrc"></NewNavBar>
+    <NavBar :newAvatarUrl="avatarSrc"></NavBar>
     <div class="flex h-screen mx-auto max-w-screen-2xl sm:px-6 lg:pl-16 pt-10 tracking-wider">
         <div class="">
             <div class="w-60 shadow-md bg-white">
@@ -46,7 +46,7 @@
                         </div>
                         <div class="w-80">
                             <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="username" v-if="!usernameCheckFail"/>
-                            <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-red-700 rounded-sm focus:outline-none" v-model="username" v-else/>
+                            <input class="w-full p-2 text-sm text-gray-700 tracking-wider border-2 border-blue-500 rounded-sm focus:outline-none" v-model="username" v-else/>
                             <p class="text-xs text-gray-700 pt-3">包含数字、英文、中文在内的4-14个字符</p>
                         </div>
                         <div class="w-32 text-right">
@@ -95,7 +95,7 @@
                             <p class="text-sm font-medium text-gray-700 mb-4">Steam Api Key</p>
                         </div>
                         <div class="w-80">
-                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-red-700 rounded-sm focus:outline-none" v-model="steamApiKey" v-if="checkSteamApiKeyFail"/>
+                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-blue-500 rounded-sm focus:outline-none" v-model="steamApiKey" v-if="checkSteamApiKeyFail"/>
                             <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamApiKey" v-else/>
                             <div class="text-xs text-gray-700 pt-3"><a  href="https://steamcommunity.com/dev/apikey" target="_blank">获取Steam Api Key</a></div>
                         </div>
@@ -113,7 +113,7 @@
                             <p class="text-sm font-medium text-gray-700">Steam交易链接</p>
                         </div>
                         <div class="w-80">
-                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-red-700 rounded-sm focus:outline-none" v-model="steamTradeUrl" v-if="checkTradeUrlFail"/>
+                            <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-blue-500 rounded-sm focus:outline-none" v-model="steamTradeUrl" v-if="checkTradeUrlFail"/>
                             <input class="w-full p-1 text-sm text-gray-700 tracking-wider border-2 border-gray-200 rounded-sm focus:outline-none" v-model="steamTradeUrl" v-else/>
                             <div class="text-xs text-gray-700 pt-3"><a :href="'https://steamcommunity.com/profiles/' + steamId + '/tradeoffers/privacy#trade_offer_access_url'" target="_blank">获取Steam交易链接</a></div>
                         </div>
@@ -134,14 +134,14 @@
 import { defineComponent } from 'vue'
 import { Modal } from 'ant-design-vue'
 import axios from 'axios';
-import NewNavBar from '../components/NewNavBar.vue'
 import { cos } from '../common/cos'
 import { DustIcon } from '../common/icon'
 import * as checkUtils from '../common/check'
+import NavBar from '../components/NavBar.vue'
 
 export default defineComponent({
     components: {
-        NewNavBar,
+        NavBar,
         DustIcon
     },
     data() {
@@ -200,7 +200,12 @@ export default defineComponent({
                 this.usernameCheckFail = false
                 this.openSuccessModal("更新用户名成功")
             } catch (e) {
-                this.openFailModal("更新用户名失败")
+                const errorMessage = e.response.data.errorMessage
+                if (errorMessage) {
+                    this.openFailModal(errorMessage)
+                } else {
+                    this.openFailModal("更新用户名失败")
+                }
             }
         },
         async bindSteam(steamReturnUrl) {
@@ -216,7 +221,12 @@ export default defineComponent({
                 this.isBindSteam = true
                 this.openSuccessModal("绑定Steam成功")
             } catch(e) {
-                this.openFailModal("绑定Steam失败")
+                const errorMessage = e.response.data.errorMessage
+                if (errorMessage) {
+                    this.openFailModal(errorMessage)
+                } else {
+                    this.openFailModal("绑定Steam失败")
+                }
             }
         },
         async updateSteamApiKey() {
@@ -232,7 +242,12 @@ export default defineComponent({
                 this.checkSteamApiKeyFail = false
                 this.openSuccessModal("更新Steam Api Key成功")
             } catch(e) {
-                this.openFailModal("更新Steam Api Key失败")
+                const errorMessage = e.response.data.errorMessage
+                if (errorMessage) {
+                    this.openFailModal(errorMessage)
+                } else {
+                    this.openFailModal("更新Steam Api Key失败")
+                }
             }
         },
         async updateSteamTradeUrl() {
@@ -248,7 +263,12 @@ export default defineComponent({
                 this.checkTradeUrlFail = false
                 this.openSuccessModal("更新Steam交易链接成功")
             } catch(e) {
-                this.openFailModal("更新Steam交易链接失败")
+                const errorMessage = e.response.data.errorMessage
+                if (errorMessage) {
+                    this.openFailModal(errorMessage)
+                } else {
+                    this.openFailModal("更新Steam交易链接失败")
+                }
             }
         },
         openSuccessModal(title) {

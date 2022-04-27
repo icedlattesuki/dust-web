@@ -1,5 +1,6 @@
 function isLoggedIn() {
-    return getCookie("jwt") !== undefined
+    const jwt = getCookie("jwt")
+    return jwt !== undefined && jwt !== "" && jwt !== '""'
 }
 
 function logout() {
@@ -9,14 +10,14 @@ function logout() {
 function getCookie(name) {
     let cookie = {};
     document.cookie.split(';').forEach(function(el) {
-      let [k,v] = el.split('=');
-      cookie[k.trim()] = v;
+      let [k,v] = el.split('=')
+      cookie[k.trim()] = v
     })
-    return cookie[name];
+    return cookie[name]
 }
 
 function deleteCookie(name) {
-    document.cookie = name +'=; Max-Age=0;'
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 }
 
 export {isLoggedIn, logout}
