@@ -146,6 +146,7 @@ export default defineComponent({
     },
     data() {
         return {
+            userUuid: '',
             username: '',
             avatarSrc: '',
             publicAddress: '',
@@ -170,7 +171,13 @@ export default defineComponent({
         async uploadAvatar(request) {
             this.spinning = true
             try {
-                const avatarKey = `avatar/${request.file.name}`
+                const pattern = /\.(jpg|jpeg|png)$/
+                if (!pattern.test(request.file.name)) {
+                    this.openFailModal("仅支持上传jpg/jpeg/png格式的图片")
+                    return
+                }
+                const arr = request.file.name.split('.')
+                const avatarKey = `avatar/${this.userUuid + '.' + arr[arr.length - 1]}`
                 await cos.putObject({
                     Bucket: 'dust-test-1253732422',
                     Region: 'ap-shanghai',
@@ -291,6 +298,7 @@ export default defineComponent({
             const profile = response.data
             this.username = profile.name
             this.publicAddress = profile.publicAddress
+            this.userUuid = profile.userUuid
             this.avatarSrc = profile.avatarUrl
             this.steamId = profile.steamId
             this.isBindSteam = Boolean(profile.steamId)
